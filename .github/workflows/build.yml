@@ -1,22 +1,59 @@
-name: Build AIX Files
+name: Build and Deploy Sources
 
+# 触发条件：推送到 main 分支时，或手动触发
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# 权限设置：允许写入仓库（用于发布 gh-pages）
+permissions:
+  contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Rust
-        uses: rust-lang/rustup-init@v1
+      # 2. 配置 Rust 环境 (Aidoku 源需要编译为 wasm32-unknown-unknown)
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          default-toolchain: nightly
+          targets: wasm32-unknown-unknown
 
-      - name: Build AIX Files
-        run: bash build.sh
+      # 3. 缓存 Cargo 依赖 (加快构建速度)
+      - name: Cache Cargo registry
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      # 4. 执行构建脚本
+      # 注意：假设仓库根目录下有 build.sh 脚本，这通常会把构建好的 .aipkg 和 .json 文件放入 public 目录
+      - name: Build Sources
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      # 5. 验证构建结果 (可选，用于调试)
+      - name: List Output Files
+        run: ls -R public
+
+      # 6. 部署到 gh-pages 分支
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # 构建输出目录，一般是 public
+          force_orphan: true     # 保持 gh-pages 分支历史干净
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
