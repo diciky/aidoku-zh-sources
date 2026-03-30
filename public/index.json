@@ -20,10 +20,10 @@
   {
     "id": "zh.baozimh1",
     "name": "包子漫画1",
-    "file": "zh.baozimh1-v4.aix",
-    "icon": "zh.baozimh1-v4.png",
+    "file": "zh.baozimh1-v5.aix",
+    "icon": "zh.baozimh1-v5.png",
     "lang": "zh",
-    "version": 4,
+    "version": 5,
     "nsfw": 0
   },
   {
@@ -38,28 +38,28 @@
   {
     "id": "zh.bilicomic",
     "name": "哔哩漫画",
-    "file": "zh.bilicomic-v2.aix",
-    "icon": "zh.bilicomic-v2.png",
+    "file": "zh.bilicomic-v3.aix",
+    "icon": "zh.bilicomic-v3.png",
     "lang": "zh",
-    "version": 2,
+    "version": 3,
     "nsfw": 0
   },
   {
     "id": "zh.cartoonmad",
     "name": "动漫狂",
-    "file": "zh.cartoonmad-v1.aix",
-    "icon": "zh.cartoonmad-v1.png",
+    "file": "zh.cartoonmad-v2.aix",
+    "icon": "zh.cartoonmad-v2.png",
     "lang": "zh",
-    "version": 1,
+    "version": 2,
     "nsfw": 0
   },
   {
     "id": "zh.copymanga",
     "name": "拷贝漫画",
-    "file": "zh.copymanga-v4.aix",
-    "icon": "zh.copymanga-v4.png",
+    "file": "zh.copymanga-v12.aix",
+    "icon": "zh.copymanga-v12.png",
     "lang": "zh",
-    "version": 4,
+    "version": 12,
     "nsfw": 1
   },
   {
@@ -155,10 +155,10 @@
   {
     "id": "zh.msxhm",
     "name": "漫小肆韩漫",
-    "file": "zh.msxhm-v5.aix",
-    "icon": "zh.msxhm-v5.png",
+    "file": "zh.msxhm-v6.aix",
+    "icon": "zh.msxhm-v6.png",
     "lang": "zh",
-    "version": 5,
+    "version": 6,
     "nsfw": 2
   },
   {
@@ -173,10 +173,10 @@
   {
     "id": "zh.noy1",
     "name": "NoyAcg",
-    "file": "zh.noy1-v2.aix",
-    "icon": "zh.noy1-v2.png",
+    "file": "zh.noy1-v3.aix",
+    "icon": "zh.noy1-v3.png",
     "lang": "zh",
-    "version": 2,
+    "version": 3,
     "nsfw": 2
   },
   {
@@ -191,10 +191,10 @@
   {
     "id": "zh.wnacg",
     "name": "绅士漫画",
-    "file": "zh.wnacg-v3.aix",
-    "icon": "zh.wnacg-v3.png",
+    "file": "zh.wnacg-v4.aix",
+    "icon": "zh.wnacg-v4.png",
     "lang": "zh",
-    "version": 3,
+    "version": 4,
     "nsfw": 2
   },
   {
@@ -207,12 +207,21 @@
     "nsfw": 2
   },
   {
+    "id": "zh.zaimanhua",
+    "name": "再漫画",
+    "file": "zh.zaimanhua-v1.aix",
+    "icon": "zh.zaimanhua-v1.png",
+    "lang": "zh",
+    "version": 1,
+    "nsfw": 0
+  },
+  {
     "id": "zh.zerobywns",
     "name": "zero搬运网",
-    "file": "zh.zerobywns-v7.aix",
-    "icon": "zh.zerobywns-v7.png",
+    "file": "zh.zerobywns-v8.aix",
+    "icon": "zh.zerobywns-v8.png",
     "lang": "zh",
-    "version": 7,
+    "version": 8,
     "nsfw": 0
   }
 ]

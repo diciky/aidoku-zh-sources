@@ -3,9 +3,11 @@ extern crate alloc;
 
 use aidoku::{
 	error::Result,
+	helpers::substring::Substring,
 	prelude::*,
 	std::{json, String, Vec},
-	Chapter, Filter, FilterType, Listing, Manga, MangaPageResult, Page,
+	Chapter, Filter, FilterType, Listing, Manga, MangaContentRating, MangaPageResult, MangaViewer,
+	Page,
 };
 use alloc::string::ToString;
 
@@ -183,19 +185,66 @@ fn get_manga_listing(listing: Listing, page: i32) -> Result<MangaPageResult> {
 
 #[get_manga_details]
 fn get_manga_details(id: String) -> Result<Manga> {
-	let url = helper::gen_manga_details_url(id);
-	let json = helper::get_json(url);
-	let data = json.get("results").as_object()?;
+	let url = helper::gen_manga_url(id.clone());
+	let html = helper::get_html(url.clone());
+	let cover = html
+		.select(".comicParticulars-left-img>img")
+		.attr("data-src")
+		.read();
+	let title = html.select("h6").text().read();
+	let author = html
+		.select(".comicParticulars-right-txt>a")
+		.array()
+		.map(|a| a.as_node().unwrap().text().read())
+		.collect::<Vec<String>>()
+		.join(", ");
+	let artist = String::new();
+	let description = html.select(".intro").text().read();
+	let categories = html
+		.select(".comicParticulars-tag>a")
+		.array()
+		.map(|a| a.as_node().unwrap().text().read().replace("#", ""))
+		.collect::<Vec<String>>();
+	let full_title = html.select("title").text().read();
+	let status = if full_title.contains("連載中") {
+		aidoku::MangaStatus::Ongoing
+	} else if full_title.contains("已完結") {
+		aidoku::MangaStatus::Completed
+	} else {
+		aidoku::MangaStatus::Unknown
+	};
+	let nsfw = MangaContentRating::Safe;
+	let viewer = MangaViewer::Rtl;
 
-	Ok(parser::parse_manga(data))
+	Ok(Manga {
+		id,
+		cover,
+		title,
+		author,
+		artist,
+		description,
+		url,
+		categories,
+		status,
+		nsfw,
+		viewer,
+	})
 }
 
 #[get_chapter_list]
 fn get_chapter_list(id: String) -> Result<Vec<Chapter>> {
+	let manga_url = helper::gen_manga_url(id.clone());
+	let text = helper::get_text(manga_url);
+	let key = text
+		.substring_after("var ccx = '")
+		.unwrap()
+		.substring_before("'")
+		.unwrap()
+		.to_string();
 	let url = helper::gen_chapter_list_url(id);
 	let json = helper::get_json(url);
 	let data = json.get("results").as_string()?.read();
-	let data = helper::decrypt(data);
+	let data = helper::decrypt(data, key);
 	let data = json::parse(data)?.as_object()?;
 
 	Ok(parser::parse_chapter_list(data))
@@ -204,9 +253,21 @@ fn get_chapter_list(id: String) -> Result<Vec<Chapter>> {
 #[get_page_list]
 fn get_page_list(manga_id: String, chapter_id: String) -> Result<Vec<Page>> {
 	let url = helper::gen_page_list_url(manga_id, chapter_id);
-	let json = helper::get_json(url);
-	let data = json.get("results").as_object()?;
-	let data = data.get("chapter").as_object()?;
+	let text = helper::get_text(url);
+	let key = text
+		.substring_after("var ccy = '")
+		.unwrap()
+		.substring_before("'")
+		.unwrap()
+		.to_string();
+	let data = text
+		.substring_after("contentKey=\"")
+		.unwrap()
+		.substring_before("\"")
+		.unwrap()
+		.to_string();
+	let data = helper::decrypt(data, key);
+	let data = json::parse(data)?.as_array()?;
 
 	Ok(parser::parse_page_list(data))
 }
